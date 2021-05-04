@@ -1,0 +1,359 @@
+{
+	"info": {
+		"_postman_id": "2d7b487b-29b6-41df-90ad-3c63ca6c5f6e",
+		"name": "Trello",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Board",
+			"item": [
+				{
+					"name": "Get board {id}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}boards/kkNeufog/?key=e60d1f73402ca662d16963b0ebf4aca3&token=b7bae84d74929196e2b79dc0456248f2b8118ff2fc2c22971079591d495cc705",
+							"host": [
+								"{{baseUrl}}boards"
+							],
+							"path": [
+								"kkNeufog",
+								""
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "e60d1f73402ca662d16963b0ebf4aca3"
+								},
+								{
+									"key": "token",
+									"value": "b7bae84d74929196e2b79dc0456248f2b8118ff2fc2c22971079591d495cc705"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get/1/boards/{id}/lists",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}boards/kkNeufog/lists?key={{API_KEY}}&token={{API_TOKEN}}",
+							"host": [
+								"{{baseUrl}}boards"
+							],
+							"path": [
+								"kkNeufog",
+								"lists"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{API_KEY}}"
+								},
+								{
+									"key": "token",
+									"value": "{{API_TOKEN}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Cards",
+			"item": [
+				{
+					"name": "POST /1/cards",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set('cardId',pm.response.json().id)",
+									"",
+									"pm.test(\"Name field is not empty\", function () {",
+									"    pm.expect(pm.response.json().name).to.not.be.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"test_new\",\n    \"idBoard\": \"6090631eb103a9503cb8e5b5\",\n    \"idList\": \"6090631eb103a9503cb8e5b6\"\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}cards/?key={{API_KEY}}&token={{API_TOKEN}}",
+							"host": [
+								"{{baseUrl}}cards"
+							],
+							"path": [
+								""
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{API_KEY}}"
+								},
+								{
+									"key": "token",
+									"value": "{{API_TOKEN}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET/1/cards/id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"pm.test('Verify response body', function (){",
+									"   pm.expect(pm.response.json().id).to.eq(pm.variables.get('card_id'))",
+									"   pm.expect(pm.response.json().idLabels).to.be.an(\"array\")",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const baseUrl = pm.variables.get('baseUrl')",
+									"const key = pm.collectionVariables.get('API_KEY')",
+									"const token = pm.collectionVariables.get('API_TOKEN')",
+									"",
+									"//  console.log (`${baseUrl} list/6090631eb103a9503cb8e5b6/cards?key=${key}&token=${token}`)",
+									"",
+									"pm.sendRequest(`${baseUrl}list/6090631eb103a9503cb8e5b6/cards?key=${key}&token=${token}`, function (err, response) {",
+									"    pm.variables.set('card_id',response.json()[0].id)",
+									"    console.log(pm.variables.get('card_id'))",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}cards/{{card_id}}?key={{API_KEY}}&token={{API_TOKEN}}",
+							"host": [
+								"{{baseUrl}}cards"
+							],
+							"path": [
+								"{{card_id}}"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{API_KEY}}"
+								},
+								{
+									"key": "token",
+									"value": "{{API_TOKEN}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /1/cards/{id}",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"test_new\",\n    \"desc\":\"new api test\",\n    \"idBoard\": \"6090631eb103a9503cb8e5b5\",\n    \"idList\": \"6090631eb103a9503cb8e5b6\"\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}cards/{{cardId}}?key={{API_KEY}}&token={{API_TOKEN}}",
+							"host": [
+								"{{baseUrl}}cards"
+							],
+							"path": [
+								"{{cardId}}"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{API_KEY}}"
+								},
+								{
+									"key": "token",
+									"value": "{{API_TOKEN}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE/1/cards",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}cards/{{cardId}}?key={{API_KEY}}&token={{API_TOKEN}}",
+							"host": [
+								"{{baseUrl}}cards"
+							],
+							"path": [
+								"{{cardId}}"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{API_KEY}}"
+								},
+								{
+									"key": "token",
+									"value": "{{API_TOKEN}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response time is less than 200ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});"
+						]
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "API_KEY",
+			"value": "e60d1f73402ca662d16963b0ebf4aca3"
+		},
+		{
+			"key": "API_TOKEN",
+			"value": "b7bae84d74929196e2b79dc0456248f2b8118ff2fc2c22971079591d495cc705"
+		},
+		{
+			"key": "ID_CARD",
+			"value": "6091357a29241f2bc7a32597"
+		},
+		{
+			"key": "ID_CARD",
+			"value": ""
+		},
+		{
+			"key": "cardId",
+			"value": ""
+		}
+	]
+}
